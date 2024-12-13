@@ -11,12 +11,18 @@ import java.util.Objects;
 
 @RestController
 public class SimpleController {
+
+	private void emptyMethod() {
+
+	}
+
 	// Passing arguments with different methods
 	@RequestMapping(value = "/simple/increment_from_param", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String incrementParam(@RequestParam(name = "sampleParameter") Integer target) {
 		if (Objects.equals(target, 123))
 			throw new IllegalArgumentException("Parameter target must not be 123");
 
+		emptyMethod();
 		return String.format("%d", target + 1);
 	}
 
@@ -25,6 +31,7 @@ public class SimpleController {
 		if (Objects.equals(body, "123"))
 			throw new IllegalArgumentException("Body must not be 123");
 
+		emptyMethod();
 		return body + "1";
 	}
 
@@ -37,6 +44,7 @@ public class SimpleController {
 		if (Objects.equals(wallet.getCash(), 123))
 			throw new IllegalArgumentException("Body must not be 123");
 
+		emptyMethod();
 		return wallet.getCash() + "1";
 	}
 
@@ -46,6 +54,7 @@ public class SimpleController {
 		if (Objects.equals(header, "1234"))
 			throw new IllegalArgumentException("Header must not be 1234");
 
+		emptyMethod();
 		return header + "1";
 	}
 
@@ -59,6 +68,7 @@ public class SimpleController {
 		if (Objects.equals(headerC, "123") || Objects.equals(parameterB, "321"))
 			throw new IllegalArgumentException("C and B must not contain 123 and 321");
 
+		emptyMethod();
 		return parameterA + parameterB + headerC;
 	}
 
@@ -71,6 +81,7 @@ public class SimpleController {
 		if (Objects.equals(header, "1234"))
 			throw new IllegalArgumentException("Header must not be 1234");
 
+		emptyMethod();
 		return header + "1";
 	}
 
@@ -83,6 +94,7 @@ public class SimpleController {
 		if (Objects.equals(header, "1234"))
 			throw new IllegalArgumentException("Header must not be 1234");
 
+		emptyMethod();
 		return header + "1";
 	}
 }

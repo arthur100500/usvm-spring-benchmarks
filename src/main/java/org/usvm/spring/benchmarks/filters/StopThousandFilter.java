@@ -35,10 +35,10 @@ public class StopThousandFilter implements Filter {
 		if (sampleParameter != null && sampleParameter.equals("1000"))
 			throw new IllegalArgumentException("Parameter sampleParameter must not be set to 1000");
 
-		var bodyStream = req.getReader();
-		var body = bodyStream.lines().collect(Collectors.joining());
-		if (body.equals("1000"))
-			throw new IllegalArgumentException("Parameter sampleParameter must not be set to 1000");
+//		var bodyStream = req.getReader();
+//		var body = bodyStream.lines().collect(Collectors.joining());
+//		if (body.equals("1000"))
+//			throw new IllegalArgumentException("Parameter sampleParameter must not be set to 1000");
 
 		request.getParameterMap();
 		chain.doFilter(request, response);
