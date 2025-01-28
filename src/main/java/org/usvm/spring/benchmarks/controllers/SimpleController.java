@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.usvm.spring.benchmarks.model.Wallet;
 
 

@@ -1,5 +1,8 @@
 package org.usvm.spring.benchmarks.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -16,7 +19,10 @@ public class Wallet extends BaseEntity {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "card_id")
 	@OrderBy("number")
-	private List<Card> cards = new ArrayList<>();
+	private List<Card> cards;
+
+	// For json tests
+	private Card card;
 
 	@Override
 	public String toString() {
