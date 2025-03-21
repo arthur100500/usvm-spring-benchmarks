@@ -72,30 +72,4 @@ public class SimpleController {
 		emptyMethod();
 		return parameterA + parameterB + headerC;
 	}
-
-	// Constraints on header within request mapping annotation
-	@RequestMapping(value = "/simple/increment_from_header",
-		method = {RequestMethod.GET, RequestMethod.POST},
-		produces = MediaType.APPLICATION_JSON_VALUE,
-		headers = {"Header_Access=Success", "Header_Access_2=Success_2"})
-	public String checkHeadersConstraintsAndIncrementHeader(@RequestHeader("Sample_HeAdEr") String header) {
-		if (Objects.equals(header, "1234"))
-			throw new IllegalArgumentException("Header must not be 1234");
-
-		emptyMethod();
-		return header + "1";
-	}
-
-	// Constraints on params within request mapping annotation
-	@RequestMapping(value = "/simple/increment_from_header",
-		method = {RequestMethod.GET, RequestMethod.DELETE},
-		produces = MediaType.APPLICATION_JSON_VALUE,
-		params = {"Param_Access=Success", "Param_Access_2=Success_2"})
-	public String checkParamsConstraintsAndIncrementHeader(@RequestHeader("Sample_HeAdEr") String header) {
-		if (Objects.equals(header, "1234"))
-			throw new IllegalArgumentException("Header must not be 1234");
-
-		emptyMethod();
-		return header + "1";
-	}
 }
