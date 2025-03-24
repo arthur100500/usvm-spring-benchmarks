@@ -1,12 +1,8 @@
 package org.usvm.spring.benchmarks.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity

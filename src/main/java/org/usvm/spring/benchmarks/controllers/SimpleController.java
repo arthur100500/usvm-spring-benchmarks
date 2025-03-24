@@ -1,6 +1,9 @@
 package org.usvm.spring.benchmarks.controllers;
 
+import jakarta.servlet.http.Cookie;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -98,4 +101,30 @@ public class SimpleController {
 		emptyMethod();
 		return header + "1";
 	}
+
+	// Constraints on params within request mapping annotation
+	@RequestMapping(value = "/simple/increment_from_cookie",
+		method = {RequestMethod.GET, RequestMethod.DELETE},
+		produces = MediaType.APPLICATION_JSON_VALUE,
+		params = {"Param_Access=Success", "Param_Access_2=Success_2"})
+	public String checCookieConstraintsAndIncrementCookie(Cookie k1) {
+		new Cookie("name", "value");
+		if (Objects.equals(k1.getValue(), "1234"))
+			throw new IllegalArgumentException("Header must not be 1234");
+
+		emptyMethod();
+		return k1.getValue() + "1";
+	}
+
+	@RequestMapping(value = "/simple/header_branching",
+		method = RequestMethod.POST,
+		produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> headerBranching(@RequestHeader("input") String input) {
+		if (Objects.equals(input, "123"))
+			return new ResponseEntity<>(1, HttpStatus.OK);
+		if (Objects.equals(input, "234"))
+			return new ResponseEntity<>(2, HttpStatus.ACCEPTED);
+		return new ResponseEntity<>(3, HttpStatus.BAD_REQUEST);
+	}
+
 }

@@ -24,16 +24,16 @@ public class StopThousandFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpServletResponse res = (HttpServletResponse) response;
-
-		var sampleHeader = req.getHeader("SAMPLE_HEADER");
-		if (sampleHeader != null && sampleHeader.equals("1000"))
-			throw new IllegalArgumentException("Header SAMPLE_HEADER must not be provided set to 1000");
-
-		var sampleParameter = req.getParameter("sampleParameter");
-		if (sampleParameter != null && sampleParameter.equals("1000"))
-			throw new IllegalArgumentException("Parameter sampleParameter must not be set to 1000");
+//		HttpServletRequest req = (HttpServletRequest) request;
+//		HttpServletResponse res = (HttpServletResponse) response;
+//
+//		var sampleHeader = req.getHeader("SAMPLE_HEADER");
+//		if (sampleHeader != null && sampleHeader.equals("1000"))
+//			throw new IllegalArgumentException("Header SAMPLE_HEADER must not be provided set to 1000");
+//
+//		var sampleParameter = req.getParameter("sampleParameter");
+//		if (sampleParameter != null && sampleParameter.equals("1000"))
+//			throw new IllegalArgumentException("Parameter sampleParameter must not be set to 1000");
 
 //		var bodyStream = req.getReader();
 //		var body = bodyStream.lines().collect(Collectors.joining());
