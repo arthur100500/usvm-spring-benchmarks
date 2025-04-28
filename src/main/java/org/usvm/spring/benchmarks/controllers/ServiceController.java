@@ -21,7 +21,7 @@ public class ServiceController {
     GraphService service;
     
     @RequestMapping(value = "/service/link_node", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public HttpEntity<GraphNode> linkNode(@RequestParam int node_id) {
+    public HttpEntity<GraphNode> linkNode(@RequestParam String node_id) {
         GraphNode node = repository.getNodeById(node_id);
         return new HttpEntity<>(service.linkNode(node));
     }

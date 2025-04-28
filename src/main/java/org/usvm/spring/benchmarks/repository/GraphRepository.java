@@ -5,7 +5,7 @@ import org.usvm.spring.benchmarks.model.GraphNode;
 
 @Repository
 public class GraphRepository {
-    public GraphNode getNodeById(int id) {
+    public GraphNode getNodeById(String id) {
         return new GraphNode(13, null, null);
     }
 }
