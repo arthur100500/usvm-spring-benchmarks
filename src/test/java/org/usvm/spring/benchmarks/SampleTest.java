@@ -2,17 +2,24 @@ package org.usvm.spring.benchmarks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
+import org.junit.Assert;
+import org.junit.function.ThrowingRunnable;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -20,17 +27,23 @@ import org.usvm.spring.benchmarks.model.GraphNode;
 import org.usvm.spring.benchmarks.model.OurPoint;
 import org.usvm.spring.benchmarks.model.TestJsonPayload;
 import org.usvm.spring.benchmarks.model.TestJsonPayloadWithCtor;
+import org.usvm.spring.benchmarks.model.Wallet;
 import org.usvm.spring.benchmarks.repository.GraphRepository;
 import org.usvm.spring.benchmarks.service.GraphService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
+import static org.mockito.internal.matchers.text.ValuePrinter.print;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @DisabledInAotMode
 @ExtendWith({SpringExtension.class})
-@WebMvcTest
+@WebMvcTest()
 public class SampleTest {
     @Autowired
     private MockMvc mockMvc;
@@ -48,6 +61,21 @@ public class SampleTest {
         ResultActions resultActions = mockMvc.perform(get("/service/link_node").param("node_id", "32"));
     }
 
+    @Test
+    public void testThrowsException() throws Exception {
+//        MvcResult resultActions = mockMvc.perform(get("/exception/throw").param("param", "32")).andReturn();
+//        resultActions.getResolvedException().getMessage();
+        ThrowingRunnable r = () -> print("123");
+        assertThrows(NullPointerException.class, r);
+    }
+
+    @Test
+    public void notRequiredTest() throws Exception {
+        MvcResult resultActions = mockMvc.perform(get("/simple/notRequired")).andReturn();
+        resultActions.getResolvedException().getMessage();
+        ThrowingRunnable r = () -> print("123");
+        assertThrows(NullPointerException.class, r);
+    }
 
     @Test
     void bodyObject() throws InstantiationException, Exception, JsonProcessingException {
@@ -256,5 +284,104 @@ public class SampleTest {
         Integer v50 = 200;
         String c = new ObjectMapper().writeValueAsString(v);
         Object result = this.mockMvc.perform(MockMvcRequestBuilders.post("/body/object").contentType(MediaType.APPLICATION_JSON).content(c));
+    }
+
+    @Test
+    void bodyWithValidation() throws InstantiationException, Exception, JsonProcessingException {
+        Wallet v = ReflectionUtils.<Wallet>allocateInstance(Wallet.class);
+        ReflectionTestUtils.setField(v, "cash", "22");
+        ReflectionTestUtils.setField(v, "cards", null);
+        ReflectionTestUtils.setField(v, "card", null);
+        Integer v1 = Integer.valueOf(0);
+        ReflectionTestUtils.setField(v, "id", v1);
+        Assertions.assertThrows(ServletException.class, () -> this.mockMvc.perform(MockMvcRequestBuilders.get("/body/body_with_validation").content(new ObjectMapper().writeValueAsString(v)).contentType(MediaType.APPLICATION_JSON)));
+    }
+
+
+    @Test
+    void httpEntity() throws InstantiationException, Exception, JsonProcessingException {
+        Wallet v = ReflectionUtils.allocateInstance(Wallet.class);
+        ReflectionTestUtils.setField(v, "cash", "11");
+        ReflectionTestUtils.setField(v, "cards", null);
+        ReflectionTestUtils.setField(v, "card", null);
+        ReflectionTestUtils.setField(v, "id", 1);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/other/http_entity").content(new ObjectMapper().writeValueAsString(v)).contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void incrementBody() throws Exception {
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/simple/increment_from_body").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andExpect(content().string("1"));
+    }
+
+    @Test
+    void walletParam() throws Exception {
+        mockMvc.perform(get("/complex/wallet_header/")
+                .param("wallet[cash]", "123")
+                .param("wallet[id]", "228337")
+        );
+    }
+
+    @Test
+    void walletHeader() throws Exception {
+        mockMvc.perform(get("/complex/wallet_header/")
+                .header("wallet", "{\"cash\": \"123\"}")
+        );
+    }
+
+    @Test
+    void matrixStuff() throws Exception {
+        mockMvc.perform(get("/complex/matrix_map/{something};x=123;y=234", "something")).andExpect(content().string("123234"));
+    }
+
+
+    @Test
+    void walletMoneyFromParam() throws Exception {
+        String[] v = new String[1];
+        v[0] = "0000-00-00";
+        String[] v1 = new String[1];
+        v1[0] = "1";
+        String[] v2 = new String[1];
+        v2[0] = "+00";
+        String[] v3 = new String[1];
+        v3[0] = "0000-00-00";
+        String[] v4 = new String[1];
+        v4[0] = "1";
+        String[] v5 = new String[1];
+        v5[0] = "0000-00-00";
+        String[] v6 = new String[1];
+        v6[0] = "1";
+        String[] v7 = new String[1];
+        v7[0] = "0000-00-00";
+        String[] v8 = new String[1];
+        v8[0] = "1";
+        String[] v9 = new String[1];
+        v9[0] = "0000-00-00";
+        String[] v10 = new String[1];
+        v10[0] = "1";
+        String[] v11 = new String[1];
+        v11[0] = "0000-00-00";
+        String[] v12 = new String[1];
+        v12[0] = "1";
+        String[] v13 = new String[1];
+        v13[0] = "-8";
+        Integer v14 = Integer.valueOf(200);
+        this.mockMvc.perform(MockMvcRequestBuilders.get("/complex/wallet_param/")
+                        .param("card.expiryDate", v)
+                        .param("card.id", v1)
+                        .param("cash", v2)
+                        .param("cards[0].expiryDate", v3)
+                        .param("cards[0].id", v4)
+                        .param("cards[1].expiryDate", v5)
+                        .param("cards[1].id", v6)
+                        .param("cards[2].expiryDate", v7)
+                        .param("cards[2].id", v8)
+                        .param("cards[3].expiryDate", v9)
+                        .param("cards[3].id", v10)
+                        .param("cards[4].expiryDate", v11)
+                        .param("cards[4].id", v12)
+                        .param("id", v13))
+                .andExpect(MockMvcResultMatchers.status().is(v14)).andExpect(content().string("-1"));
     }
 }

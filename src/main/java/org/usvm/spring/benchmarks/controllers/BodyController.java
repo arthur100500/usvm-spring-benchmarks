@@ -1,10 +1,10 @@
 package org.usvm.spring.benchmarks.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +23,7 @@ public class BodyController {
 
     }
 
-    @RequestMapping(value = "/body/body_with_validation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/body/body_with_validation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String bodyWithValidation(@Valid @RequestBody Wallet wallet, Errors errors) {
         if (Objects.equals(wallet.getCash(), 123))
             throw new IllegalArgumentException("Wallet cash cant be 123");
@@ -32,7 +32,7 @@ public class BodyController {
         return wallet.getId().toString();
     }
 
-    @RequestMapping(value = "/body/graph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/body/graph", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String bodyGraph(@RequestBody GraphNode g) {
         return String.format("Value %d", g.value);
     }
@@ -76,10 +76,17 @@ public class BodyController {
         return "none of the predicates matched";
     }
 
-    @RequestMapping(value = "/body/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/body/list", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String bodyList(@RequestBody List<GraphNode> payload) {
         if (payload.get(1).value == 3)
             return "value == 3";
         return "value != 3";
+    }
+
+    @RequestMapping(value = "/body/array", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String bodyArray(@RequestBody GraphNode[] payload) {
+        if (payload[1].value == 2)
+            return "value == 2";
+        return "value != 2";
     }
 }

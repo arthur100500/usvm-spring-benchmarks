@@ -14,7 +14,7 @@ import java.util.List;
 public class Wallet extends BaseEntity {
 	@Column(name = "cash")
 	@NotBlank
-	private String cash;
+	private int cash;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "card_id")
@@ -31,7 +31,7 @@ public class Wallet extends BaseEntity {
 		return String.format("Wallet %s %s", cash, cardsFormatted);
 	}
 
-	public Integer getCash(){
-		return Integer.parseInt(cash);
+	public int getCash(){
+		return cash;
 	}
 }

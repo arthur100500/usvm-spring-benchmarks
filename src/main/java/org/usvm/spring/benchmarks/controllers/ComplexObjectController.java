@@ -2,6 +2,7 @@ package org.usvm.spring.benchmarks.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UrlPathHelper;
 import org.usvm.spring.benchmarks.model.Wallet;
 
 import java.util.Map;
@@ -24,7 +25,7 @@ public class ComplexObjectController {
 	}
 
 	@RequestMapping(value = "/complex/header_map", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String addHeadersMap(@RequestParam Map<String, String> headers) {
+	public String addHeadersMap(@RequestHeader Map<String, String> headers) {
 		if (Objects.equals(headers.get("x"), "1234"))
 			throw new IllegalArgumentException("Parameter x must not be 1234");
 
@@ -35,7 +36,7 @@ public class ComplexObjectController {
 	}
 
 	// TODO: Specify requests parts
-	@RequestMapping(value = "/complex/matrix_map", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/complex/matrix_map/{something}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String addMatrixMap(@MatrixVariable Map<String, String> matrix) {
 		if (Objects.equals(matrix.get("x"), "1234"))
 			throw new IllegalArgumentException("Parameter x must not be 1234");
@@ -59,16 +60,8 @@ public class ComplexObjectController {
 
 
 	// Complex object via different attributes
-	@RequestMapping(value = "/complex/wallet_param/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String walletMoneyFromParam(Wallet wallet) {
-		if (Objects.equals(wallet.getCash(), 10))
-			throw new IllegalArgumentException("Cash must not be 10");
-
-		return wallet.getId().toString();
-	}
-
-	@RequestMapping(value = "/complex/wallet_header/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String walletMoneyFromHeader(@RequestHeader Wallet wallet) {
+	@RequestMapping(value = "/complex/wallet_param/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String walletMoneyFromParam(@RequestBody Wallet wallet) {
 		if (Objects.equals(wallet.getCash(), 10))
 			throw new IllegalArgumentException("Cash must not be 10");
 
